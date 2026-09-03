@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HCCF</title>
 
-    <!-- Correct relative base path for GitHub Pages subfolder deployment -->
+    <!-- Base tag configured for GitHub Pages subfolder deployment -->
     <base href="/hccf.github.io/">
 
-    <!-- Optimized self-hosted/local fonts (Replaces external Google Fonts calls to fix privacy & CORS) -->
-    <link rel="stylesheet" href="assets/css/fonts.css">
+    <!-- Relative paths matching standard WP static export directories -->
+    <link rel="stylesheet" id="astra-theme-css-css" href="wp-content/themes/astra/assets/css/minified/style.min.css" media="all">
+    <link rel="stylesheet" id="wp-block-library-css" href="wp-includes/css/dist/block-library/style.min.css" media="all">
 
-    <!-- Theme & Plugin Core CSS (Cleaned asset strings to hide version numbers) -->
-    <link rel="stylesheet" id="astra-theme-css-css" href="assets/css/astra-theme.css" media="all">
-    <link rel="stylesheet" id="wp-block-library-css" href="assets/css/style.min.css" media="all">
-
-    <!-- Global WordPress Inline Styles -->
+    <!-- Global Inline Styles -->
     <style id="global-styles-inline-css">
         :root {
             --wp--preset--font-size--small: 13px;
@@ -33,7 +30,6 @@
             --has-ast-global-color-8: #94a3b8;
         }
 
-        /* Cleaned malformed WP inline generator selectors */
         .site .ast-author-avatar {
             --ast-author-avatar-size: 60px;
         }
@@ -318,6 +314,5 @@ var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false
 <script>
 		/(trident|msie)/i.test(navigator.userAgent)&&document.getElementById&&window.addEventListener&&window.addEventListener("hashchange",function(){var t,e=location.hash.substring(1);/^[A-z0-9_-]+$/.test(e)&&(t=document.getElementById(e))&&(/^(?:a|select|input|button|textarea)$/i.test(t.tagName)||(t.tabIndex=-1),t.focus())},!1);
 		</script>
-
 </body>
 </html>
