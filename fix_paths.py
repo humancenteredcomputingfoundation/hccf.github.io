@@ -1,13 +1,13 @@
 import os
-import re
-from bs4 import BeautifulSoup
+import warnings
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 
-# Directory containing your exported HTML files
-PROJECT_DIR = "./"  # Change to your static site folder path if different
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
-# Your GitHub repo name if deploying to username.github.io/repo-name/
-# Set REPO_NAME = "" if using a custom domain or username.github.io root
-REPO_NAME = "hccf.github.io" 
+# Set this to your exact GitHub repository name
+REPO_NAME = "hccf.github.io"  # e.g., "hccf-site" or "website"
+
+PROJECT_DIR = "./"
 
 def fix_paths_in_html(file_path):
     with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
@@ -16,7 +16,6 @@ def fix_paths_in_html(file_path):
     soup = BeautifulSoup(html_content, "html.parser")
     modified = False
 
-    # Attributes that typically hold URLs to local assets or pages
     url_attributes = {
         "a": "href",
         "link": "href",
@@ -31,18 +30,12 @@ def fix_paths_in_html(file_path):
             if not val:
                 continue
 
-            # Case 1: Fix leading slash absolute paths (e.g., /wp-content/...)
+            # Case A: Path starts with leading slash (e.g., /wp-content/...)
             if val.startswith("/") and not val.startswith("//"):
-                if REPO_NAME:
-                    # Strip existing leading slash and attach repo name prefix
+                if not val.startswith(f"/{REPO_NAME}/"):
                     clean_path = val.lstrip("/")
-                    new_val = f"/{REPO_NAME}/{clean_path}"
-                else:
-                    # Convert to relative path
-                    new_val = f".{val}"
-
-                tag[attr] = new_val
-                modified = True
+                    tag[attr] = f"/{REPO_NAME}/{clean_path}"
+                    modified = True
 
     if modified:
         with open(file_path, "w", encoding="utf-8") as f:
@@ -50,7 +43,7 @@ def fix_paths_in_html(file_path):
         print(f"Fixed paths in: {file_path}")
 
 def run():
-    print("Starting path conversion...")
+    print("Running path conversion...")
     for root, _, files in os.walk(PROJECT_DIR):
         for file in files:
             if file.endswith(".html"):
