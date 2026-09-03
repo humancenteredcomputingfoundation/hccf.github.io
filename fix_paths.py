@@ -4,38 +4,52 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
-# Replace with your actual GitHub repository name (e.g., "website" or "hccf-site")
-REPO_NAME = "hccf.github.io"
+# Set this to your exact GitHub repository name
+REPO_NAME = "hccf.github.io"  # e.g., "hccf-site" or "website"
+
 PROJECT_DIR = "./"
 
-def inject_base_tag(file_path):
+def fix_paths_in_html(file_path):
     with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
         html_content = f.read()
 
     soup = BeautifulSoup(html_content, "html.parser")
-    head = soup.find("head")
+    modified = False
 
-    if head:
-        # Check if base tag already exists
-        existing_base = head.find("base")
-        base_url = f"/{REPO_NAME}/"
+    url_attributes = {
+        "a": "href",
+        "link": "href",
+        "script": "src",
+        "img": "src",
+        "source": "srcset",
+    }
 
-        if existing_base:
-            existing_base["href"] = base_url
-        else:
-            base_tag = soup.new_tag("base", href=base_url)
-            head.insert(0, base_tag)
+    for tag_name, attr in url_attributes.items():
+        for tag in soup.find_all(tag_name):
+            val = tag.get(attr)
+            if not val:
+                continue
 
+            # Case A: Path starts with leading slash (e.g., /wp-content/...)
+            if val.startswith("/") and not val.startswith("//"):
+                if not val.startswith(f"/{REPO_NAME}/"):
+                    clean_path = val.lstrip("/")
+                    tag[attr] = f"/{REPO_NAME}/{clean_path}"
+                    modified = True
+
+    if modified:
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(str(soup))
-        print(f"Injected <base> tag into: {file_path}")
+        print(f"Fixed paths in: {file_path}")
 
 def run():
+    print("Running path conversion...")
     for root, _, files in os.walk(PROJECT_DIR):
         for file in files:
             if file.endswith(".html"):
                 full_path = os.path.join(root, file)
-                inject_base_tag(full_path)
+                fix_paths_in_html(full_path)
+    print("Path conversion complete.")
 
 if __name__ == "__main__":
     run()
