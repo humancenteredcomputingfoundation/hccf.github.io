@@ -1,0 +1,25 @@
+name: Deploy Static Site
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # This is a placeholder for your static export command
+      # Usually involves a tool like 'wp-cli' or a static generator
+      - name: Generate Static Files
+        run: |
+          mkdir dist
+          # If you use a specific static export tool, run it here
+          # Example: cp -r wp-content/themes/your-theme/static-assets/* dist/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # The folder the action should deploy.
+          branch: gh-pages
